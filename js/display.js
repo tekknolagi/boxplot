@@ -35,8 +35,8 @@ Display.Active.prototype = {
     },
 
     update: function () {
-//	this.calculate();
-//	this.draw();
+	this.calculate();
+	this.draw();
     },
 
     calculate: function () {
@@ -49,12 +49,11 @@ Display.Active.prototype = {
 
 	arr = arr.sort(function(a, b){return a-b}); // sort numerically
 
-	plot.min = 2;
-	plot.q1  = 3;
-	plot.average = 4;
-	plot.median  = 4;
-	plot.q3  = 6;
-	plot.max = 7;
+	plot.min    = this.quartile(arr, 0);
+	plot.q1     = this.quartile(arr, 1);
+	plot.median = this.quartile(arr, 2);
+	plot.q3     = this.quartile(arr, 3);
+	plot.max    = this.quartile(arr, 4);
     },
     
     draw: function () {
@@ -86,17 +85,19 @@ Display.Active.prototype = {
 
     quartile: function (arr, q) { // q should be 0, 1, 2, 3, or 4
 	var index = q * 0.25 * (arr.length - 1);
-	console.log(index);
-	
+
+	var val_floor = +arr[Math.floor(index)]; // + unary operators are to cast strings to numbers
+	var val_ceil  = +arr[Math.ceil(index)];
+
 	switch (index % 1) {
 	case 0:
 	    return arr[index];
 	case 0.25:
-	    return (arr[Math.floor(index)] * 3 + arr[Math.ceil(index)]) / 4
+	    return (val_floor * 3 + val_ceil) / 4;
 	case 0.5:
-	    return (arr[Math.floor(index)] + arr[Math.ceil(index)]) / 2;
+	    return (val_floor + val_ceil) / 2;
 	case 0.75:
-	    return (arr[Math.floor(index)] + arr[Math.ceil(index)] * 3) / 4
+	    return (val_floor + val_ceil * 3) / 4;
 	}
     },
 

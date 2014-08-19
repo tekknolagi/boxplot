@@ -23,8 +23,12 @@ body {
     background-color: #eee;
     width: 105px;
     float: right;
+    display: inline-block;
 }
 
+#display {
+    display: inline-block;
+}
 
 /* Based on http://jsfiddle.net/ondras/hYfN3/ */
 input {

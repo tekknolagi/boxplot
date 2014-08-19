@@ -1,0 +1,56 @@
+body {
+    background-color: #eee;
+}
+
+#content {
+    box-sizing: border-box;
+    background-color: #fcc;
+    width: 800px;
+    height: 400px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+#spreadsheet {
+    background-color: #eee;
+    width: 105px;
+    float: right;
+}
+
+
+/* Based on http://jsfiddle.net/ondras/hYfN3/ */
+input {
+    border: none;
+    width: 80px;
+    font-size: 14px;
+    padding: 2px;
+    background-color: #eee;
+}
+
+input:hover {
+    background-color: #eee;
+}
+
+input:focus {
+    background-color: #ccf;
+}
+
+input:not(:focus) {
+    text-align: right;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+td {
+    border: 1px solid #999;
+    padding: 0;
+}
+
+tr:first-child td, td:first-child {
+		       background-color: #ccc;
+		       padding: 1px 3px;
+		       font-weight: bold;
+		       text-align: center;
+		   }

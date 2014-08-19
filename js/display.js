@@ -7,12 +7,10 @@ var Display = {
 
 var plot = {
     min:       undefined,
-//    min_valid: undefined,
     q1:        undefined,
     average:   undefined,
     median:    undefined,
     q3:        undefined,
-//    max_valid: undefined,
     max:       undefined,
     range: function () {
 	return this.max - this.min;
@@ -34,7 +32,6 @@ Display.Active.prototype = {
 
 	this.calculate();
 	this.draw();
-
     },
 
     update: function () {
@@ -43,15 +40,15 @@ Display.Active.prototype = {
     },
 
     calculate: function () {
-/*	var arr = [];
+	var arr = [];
 	for (var s in localStorage) {
-	    if (s.substring(0, 3) == "ss_") {
+	    if (s.substring(0, 3) === "ss_") {
 		arr.push(localStorage[s]);
 	    }
 	}
 
 	arr = arr.sort(function(a, b){return a-b}); // sort numerically
-*/
+
 	plot.min = 2;
 	plot.q1  = 3;
 	plot.average = 4;
@@ -86,6 +83,23 @@ Display.Active.prototype = {
     to_pixels: function (x) {
 	return  ((x - plot.min) / plot.range()) * Display.width;
     },
+
+    quartile: function (arr, q) { // q should be 0, 1, 2, 3, or 4
+	var index = q * 0.25 * (arr.length - 1);
+	console.log(index);
+	
+	switch (index % 1) {
+	case 0:
+	    return arr[index];
+	case 0.25:
+	    return (arr[Math.floor(index)] * 3 + arr[Math.ceil(index)]) / 4
+	case 0.5:
+	    return (arr[Math.floor(index)] + arr[Math.ceil(index)]) / 2;
+	case 0.75:
+	    return (arr[Math.floor(index)] + arr[Math.ceil(index)] * 3) / 4
+	}
+    },
+
 };
 
 var display = new Phaser.Game(Display.width, Display.height, Phaser.AUTO, 'display');

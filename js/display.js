@@ -22,19 +22,12 @@ Display.Active = function (display) { };
 Display.Active.prototype = {
     create: function () {
 	display.stage.backgroundColor = "#fcc";
-	display.graphics = display.add.graphics(0, 0);
-	display.graphics.lineStyle(2, 0x000000, 1);
 	
 	window.addEventListener("storage", function () {
 	    this.calculate();
 	    this.draw();
 	}, false);
 
-	this.calculate();
-	this.draw();
-    },
-
-    update: function () {
 	this.calculate();
 	this.draw();
     },
@@ -57,6 +50,13 @@ Display.Active.prototype = {
     },
     
     draw: function () {
+	if (display.graphics) {
+	    display.graphics.destroy();
+	}
+	
+	display.graphics = display.add.graphics(0, 0);
+	display.graphics.lineStyle(2, 0x000000, 1);
+
 	var plot_pixels = {};
 	for (e in plot) {
 	    plot_pixels[e] = this.to_pixels(plot[e]);
@@ -101,6 +101,11 @@ Display.Active.prototype = {
 	}
     },
 
+};
+
+Display.update = function () {
+    Display.Active.prototype.calculate();
+    Display.Active.prototype.draw();
 };
 
 var display = new Phaser.Game(Display.width, Display.height, Phaser.AUTO, 'display');

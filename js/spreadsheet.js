@@ -19,6 +19,7 @@ INPUTS.forEach(function(elm) {
     elm.onblur = function(e) {
 	localStorage["ss_" + e.target.id] = e.target.value;
 	computeAll();
+	Display.update();
     };
     var getter = function() {
 	var value = localStorage["ss_" + elm.id] || "";

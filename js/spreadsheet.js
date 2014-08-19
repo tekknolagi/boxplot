@@ -14,14 +14,14 @@ for (var i=0; i<spreadsheet_height+1; i++) {
 var DATA={}, INPUTS=[].slice.call(document.querySelectorAll("input"));
 INPUTS.forEach(function(elm) {
     elm.onfocus = function(e) {
-	e.target.value = localStorage[e.target.id] || "";
+	e.target.value = localStorage["ss_" + e.target.id] || "";
     };
     elm.onblur = function(e) {
-	localStorage[e.target.id] = e.target.value;
+	localStorage["ss_" + e.target.id] = e.target.value;
 	computeAll();
     };
     var getter = function() {
-	var value = localStorage[elm.id] || "";
+	var value = localStorage["ss_" + elm.id] || "";
 	if (value.charAt(0) == "=") {
 	    with (DATA) return eval(value.substring(1));
 	} else { return isNaN(parseFloat(value)) ? value : parseFloat(value); }

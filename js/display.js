@@ -108,7 +108,7 @@ Display.update = function () {
     Display.Active.prototype.draw();
 };
 
-var display = new Phaser.Game(Display.width, Display.height, Phaser.AUTO, 'display');
+var display = new Phaser.Game(Display.width, Display.height, Phaser.CANVAS, 'display');
 
 display.state.add('active', Display.Active);
 display.state.start('active');

@@ -1,6 +1,7 @@
 * Functionality
   + Accept pasting
   + Multiple boxplots
+  + Download .png
 * Unmet requirements
   + Outliers
   + Labels

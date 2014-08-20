@@ -1,0 +1,8 @@
+* Functionality
+  + Accept pasting
+  + Multiple boxplots
+* Unmet requirements
+  + Outliers
+  + Labels
+* Other
+  + Switch from Phaser to Pixi.js

@@ -35,7 +35,7 @@ Display.Active.prototype = {
     calculate: function () {
 	var arr = [];
 	for (var s in localStorage) {
-	    if (s.substring(0, 3) === "ss_") {
+	    if (s.substring(0, 3) === "ss_" && localStorage[s] !== "" && !isNaN(localStorage[s])) {
 		arr.push(localStorage[s]);
 	    }
 	}

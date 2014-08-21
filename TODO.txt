@@ -2,8 +2,11 @@
   + Accept pasting
   + Multiple boxplots
   + Download .png
+  + Better input
 * Unmet requirements
   + Outliers
   + Labels
+  + Scale
 * Other
   + Switch from Phaser to Pixi.js
+  + Neutral background

@@ -3,6 +3,7 @@ var Display = {
     height: 340,
     line_width: 2,
     box_height: 50,
+    intervals: 4,
 };
 
 var plot = {
@@ -27,12 +28,10 @@ Display.Active.prototype = {
 	Display.scale_text.left = display.add.text(0, Display.height - 20, '0', { font: '20px Arial', fill: '#444' });
 	Display.scale_text.right = display.add.text(Display.width, Display.height - 20, '0', { font: '20px Arial', fill: '#444' });
 	Display.scale_text.right.anchor.x = 1;
-	Display.scale_text.q1 = display.add.text(-Display.width, Display.height - 20, '0', { font: '20px Arial', fill: '#444' });
-	Display.scale_text.q1.anchor.x = 0.5;
-	Display.scale_text.median = display.add.text(-Display.width, Display.height - 20, '0', { font: '20px Arial', fill: '#444' });
-	Display.scale_text.median.anchor.x = 0.5;
-	Display.scale_text.q3 = display.add.text(-Display.width, Display.height - 20, '0', { font: '20px Arial', fill: '#444' });
-	Display.scale_text.q3.anchor.x = 0.5;
+
+	for (var i = 1; i < Display.intervals + 1; i++) {
+	    Display.scale_text["i" + i] = display.add.text(i * Display.width / Display.intervals, Display.height - 20, '0', { font: '20px Arial', fill: '#444' });
+	}
 
 	
 	this.calculate();
@@ -84,13 +83,10 @@ Display.Active.prototype = {
 
 	Display.scale_text.left.text = plot.min;
 	Display.scale_text.right.text = plot.max;
-	Display.scale_text.q1.text = plot.q1;
-	Display.scale_text.median.text = plot.median;
-	Display.scale_text.q3.text = plot.q3;
-	
-	Display.scale_text.q1.x = plot_pixels.q1;
-	Display.scale_text.median.x = plot_pixels.median;
-	Display.scale_text.q3.x = plot_pixels.q3;
+
+	for (var i = 1; i < Display.intervals + 1; i++) {
+	    Display.scale_text["i" + i].text = Math.round((+plot.min + i * plot.range() / Display.intervals) * 100) / 100;
+	}
     },
 
     draw_line: function (x1, y1, x2, y2) {

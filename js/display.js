@@ -23,11 +23,18 @@ Display.Active.prototype = {
     create: function () {
 	display.stage.backgroundColor = "#fcc";
 	
-	window.addEventListener("storage", function () {
-	    this.calculate();
-	    this.draw();
-	}, false);
+	Display.scale_text = {};
+	Display.scale_text.left = display.add.text(0, Display.height - 20, '0', { font: '20px Arial', fill: '#444' });
+	Display.scale_text.right = display.add.text(Display.width, Display.height - 20, '0', { font: '20px Arial', fill: '#444' });
+	Display.scale_text.right.anchor.x = 1;
+	Display.scale_text.q1 = display.add.text(-Display.width, Display.height - 20, '0', { font: '20px Arial', fill: '#444' });
+	Display.scale_text.q1.anchor.x = 0.5;
+	Display.scale_text.median = display.add.text(-Display.width, Display.height - 20, '0', { font: '20px Arial', fill: '#444' });
+	Display.scale_text.median.anchor.x = 0.5;
+	Display.scale_text.q3 = display.add.text(-Display.width, Display.height - 20, '0', { font: '20px Arial', fill: '#444' });
+	Display.scale_text.q3.anchor.x = 0.5;
 
+	
 	this.calculate();
 	this.draw();
     },
@@ -67,11 +74,23 @@ Display.Active.prototype = {
 
 	this.draw_line(1, Display.height / 2 + Display.box_height, 1, Display.height / 2 - Display.box_height);
 	this.draw_line(Display.width - 1, Display.height / 2 + Display.box_height, Display.width - 1, Display.height / 2 - Display.box_height);
-
-
+	
 	display.graphics.drawRect(plot_pixels.q1, Display.height / 2 - Display.box_height, plot_pixels.median - plot_pixels.q1, Display.box_height * 2);
 	display.graphics.drawRect(plot_pixels.q1, Display.height / 2 - Display.box_height, plot_pixels.q3 - plot_pixels.q1, Display.box_height * 2);
 
+
+	display.graphics.lineStyle(1, 0x444444, 1); // scale
+	this.draw_line(0, Display.height - 24, Display.width, Display.height - 24);
+
+	Display.scale_text.left.text = plot.min;
+	Display.scale_text.right.text = plot.max;
+	Display.scale_text.q1.text = plot.q1;
+	Display.scale_text.median.text = plot.median;
+	Display.scale_text.q3.text = plot.q3;
+	
+	Display.scale_text.q1.x = plot_pixels.q1;
+	Display.scale_text.median.x = plot_pixels.median;
+	Display.scale_text.q3.x = plot_pixels.q3;
     },
 
     draw_line: function (x1, y1, x2, y2) {

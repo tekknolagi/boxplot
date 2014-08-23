@@ -116,6 +116,29 @@ Display.Active.prototype = {
 	}
     },
 
+    median: function (arr) {
+	var ret = {
+	    median: undefined,
+	    left:   undefined,
+	    right:  undefined,
+	}
+	var index;
+	
+	if (arr.length % 2 === 1) {
+	    index = Math.floor(arr.length / 2);
+	    ret.median = arr[index];
+	    ret.left   = arr.slice(0, index);
+	    ret.right  = arr.slice(index + 1);
+	}
+	else {
+	    index = arr.length / 2;
+	    ret.median = (arr[index - 1] + arr[index]) / 2;
+	    ret.left   = arr.slice(0, index);
+	    ret.right  = arr.slice(index);
+	}
+
+	return ret;
+    },
 };
 
 Display.update = function () {

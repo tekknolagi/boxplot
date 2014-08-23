@@ -40,11 +40,19 @@ Display.Active.prototype = {
 	    Display.scale_text["i" + i].anchor.x = 0.5;
 	}
 
-	this.calculate();
-	this.draw();
+	this.update_boxplot();
     },
 
-    calculate: function () {
+    update_boxplot: function () {
+	var arr = this.get_values();
+
+	if (arr.length > 0) {
+	    this.calculate(arr);
+	    this.draw();
+	}
+    },
+
+    get_values: function () {
 	var arr = [];
 	for (var s in localStorage) {
 	    if (s.substring(0, 3) === "ss_" && localStorage[s] !== "" && !isNaN(localStorage[s])) {
@@ -54,6 +62,10 @@ Display.Active.prototype = {
 
 	arr = arr.sort(function(a, b){return a-b}); // sort numerically
 
+	return arr;
+    },
+    
+    calculate: function (arr) {
 	// calculate five number summary
 	stats.min    = this.quartile(arr, 0);
 	stats.q1     = this.quartile(arr, 1);
@@ -92,8 +104,6 @@ Display.Active.prototype = {
 	    
 	    i--;
 	}
-	
-	console.log(stats);
     },
     
     draw: function () {
@@ -106,15 +116,14 @@ Display.Active.prototype = {
 
 	var stats_pixels = {};
 	for (e in stats) {
-	    if (typeof stats[e] === "number") {
-		stats_pixels[e] = this.to_pixels(stats[e]);
-	    }
-	    else {
-		// outliers
+	    if (e === "outliers") {
 		stats_pixels[e] = [];
 		for (var i = 0; i < stats[e].length; i++) {
 		    stats_pixels[e].push(this.to_pixels(stats[e][i]));
 		}
+	    }
+	    else {
+		stats_pixels[e] = this.to_pixels(stats[e]);
 	    }
 	}
 
@@ -219,8 +228,7 @@ Display.Active.prototype = {
 };
 
 Display.update = function () {
-    Display.Active.prototype.calculate();
-    Display.Active.prototype.draw();
+    Display.Active.prototype.update_boxplot();
 };
 
 var display = new Phaser.Game(Display.width, Display.height, Phaser.CANVAS, 'display');

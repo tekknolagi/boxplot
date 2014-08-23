@@ -6,16 +6,22 @@ var Display = {
     intervals: 4,
 };
 
-var plot = {
-    min:       undefined,
-    q1:        undefined,
-    average:   undefined,
-    median:    undefined,
-    q3:        undefined,
-    max:       undefined,
-    range: function () {
-	return this.max - this.min;
-    },
+var stats = {
+    min:    undefined,
+    q1:     undefined,
+    median: undefined,
+    q3:     undefined,
+    max:    undefined,
+
+    min_valid: undefined, // non-outlier
+    max_valid: undefined, // non-outlier
+    
+    average: undefined,
+
+    range: undefined,
+    IQR:   undefined,
+
+    outliers: [],
 };
 
 Display.Active = function (display) { };
@@ -34,7 +40,6 @@ Display.Active.prototype = {
 	    Display.scale_text["i" + i].anchor.x = 0.5;
 	}
 
-	
 	this.calculate();
 	this.draw();
     },
@@ -43,18 +48,52 @@ Display.Active.prototype = {
 	var arr = [];
 	for (var s in localStorage) {
 	    if (s.substring(0, 3) === "ss_" && localStorage[s] !== "" && !isNaN(localStorage[s])) {
-		arr.push(localStorage[s]);
+		arr.push(+localStorage[s]); // the '+' casts the strings into numbers. Remove at your own peril.
 	    }
 	}
 
 	arr = arr.sort(function(a, b){return a-b}); // sort numerically
 
-	plot.min    = this.quartile(arr, 0);
-	plot.q1     = this.quartile(arr, 1);
-	plot.median = this.quartile(arr, 2);
-	plot.q3     = this.quartile(arr, 3);
-	plot.max    = this.quartile(arr, 4);
-	console.log(plot);
+	// calculate five number summary
+	stats.min    = this.quartile(arr, 0);
+	stats.q1     = this.quartile(arr, 1);
+	stats.median = this.quartile(arr, 2);
+	stats.q3     = this.quartile(arr, 3);
+	stats.max    = this.quartile(arr, 4);
+
+	// calculate arithmetic mean
+	stats.average = 0;
+	for (var i = 0; i < arr.length; i++) {
+	    stats.average += arr[i];
+	}
+	stats.average /= arr.length;
+
+	// calculate spread statistics
+	stats.range = stats.max - stats.min;
+	stats.IQR   = stats.q3  - stats.q1;
+
+	stats.outliers = [];
+	// calculate lower outliers
+	i = 0;
+	stats.min_valid = stats.min;
+	while (arr[i] < stats.q1 - 1.5 * stats.IQR) {
+	    stats.min_valid = arr[i + 1];
+	    stats.outliers.push(arr[i]);
+	    
+	    arr++;
+	}
+
+	// calcualte upper outliers
+	i = arr.length - 1;
+	stats.max_valid = stats.max;
+	while (arr[i] > stats.q3 + 1.5 * stats.IQR) {
+	    stats.max_valid = arr[i - 1];
+	    stats.outliers.push(arr[i]);
+	    
+	    i--;
+	}
+	
+	console.log(stats);
     },
     
     draw: function () {
@@ -65,29 +104,43 @@ Display.Active.prototype = {
 	display.graphics = display.add.graphics(0, 0);
 	display.graphics.lineStyle(2, 0x000000, 1);
 
-	var plot_pixels = {};
-	for (e in plot) {
-	    plot_pixels[e] = this.to_pixels(plot[e]);
+	var stats_pixels = {};
+	for (e in stats) {
+	    if (typeof stats[e] === "number") {
+		stats_pixels[e] = this.to_pixels(stats[e]);
+	    }
+	    else {
+		// outliers
+		stats_pixels[e] = [];
+		for (var i = 0; i < stats[e].length; i++) {
+		    stats_pixels[e].push(this.to_pixels(stats[e][i]));
+		}
+	    }
 	}
 
-	this.draw_line(0, Display.height / 2, plot_pixels.q1, Display.height / 2);
-	this.draw_line(plot_pixels.q3, Display.height / 2, Display.width, Display.height / 2);
+	// horizontal lines
+	this.draw_line(stats_pixels.min_valid, Display.height / 2, stats_pixels.q1, Display.height / 2);
+	this.draw_line(stats_pixels.q3, Display.height / 2, stats_pixels.max_valid, Display.height / 2);
 
-	this.draw_line(1, Display.height / 2 + Display.box_height, 1, Display.height / 2 - Display.box_height);
-	this.draw_line(Display.width - 1, Display.height / 2 + Display.box_height, Display.width - 1, Display.height / 2 - Display.box_height);
+	// vertical lines
+	this.draw_line(stats_pixels.min_valid, Display.height / 2 + Display.box_height, stats_pixels.min_valid, Display.height / 2 - Display.box_height);
+	this.draw_line(stats_pixels.max_valid, Display.height / 2 + Display.box_height, stats_pixels.max_valid, Display.height / 2 - Display.box_height);
 	
-	display.graphics.drawRect(plot_pixels.q1, Display.height / 2 - Display.box_height, plot_pixels.median - plot_pixels.q1, Display.box_height * 2);
-	display.graphics.drawRect(plot_pixels.q1, Display.height / 2 - Display.box_height, plot_pixels.q3 - plot_pixels.q1, Display.box_height * 2);
+	display.graphics.drawRect(stats_pixels.q1, Display.height / 2 - Display.box_height, stats_pixels.median - stats_pixels.q1, Display.box_height * 2);
+	display.graphics.drawRect(stats_pixels.q1, Display.height / 2 - Display.box_height, stats_pixels.q3 - stats_pixels.q1, Display.box_height * 2);
 
-
+	for (var i = 0; i < stats_pixels.outliers.length; i++) {
+	    this.draw_outlier(stats_pixels.outliers[i], Display.height / 2);
+	}
+	
 	display.graphics.lineStyle(1, 0x444444, 1); // scale
 	this.draw_line(0, Display.height - 24, Display.width, Display.height - 24);
 
-	Display.scale_text.left.text = plot.min;
-	Display.scale_text.right.text = plot.max;
+	Display.scale_text.left.text = stats.min;
+	Display.scale_text.right.text = stats.max;
 
 	for (var i = 1; i < Display.intervals; i++) {
-	    Display.scale_text["i" + i].text = Math.round((+plot.min + i * plot.range() / Display.intervals) * 100) / 100;
+	    Display.scale_text["i" + i].text = Math.round((stats.min + i * stats.range / Display.intervals) * 100) / 100;
 	}
     },
 
@@ -96,15 +149,20 @@ Display.Active.prototype = {
 	display.graphics.lineTo(x2, y2);
     },
 
+    draw_outlier: function (x, y) {
+	var width = 6;
+	display.graphics.drawRect(x - width / 2, y - width / 2, width, width);
+    },
+    
     to_pixels: function (x) {
-	return  ((x - plot.min) / plot.range()) * Display.width;
+	return ((x - stats.min) / stats.range) * Display.width;
     },
 
     quartile_old: function (arr, q) { // q should be 0, 1, 2, 3, or 4
 	var index = q * 0.25 * (arr.length - 1);
 
-	var val_floor = +arr[Math.floor(index)]; // + unary operators are to cast strings to numbers
-	var val_ceil  = +arr[Math.ceil(index)];
+	var val_floor = arr[Math.floor(index)];
+	var val_ceil  = arr[Math.ceil(index)];
 
 	switch (index % 1) {
 	case 0:
@@ -151,7 +209,7 @@ Display.Active.prototype = {
 	}
 	else {
 	    index = arr.length / 2;
-	    ret.median = (+arr[index - 1] + +arr[index]) / 2;
+	    ret.median = (arr[index - 1] + arr[index]) / 2;
 	    ret.left   = arr.slice(0, index);
 	    ret.right  = arr.slice(index);
 	}

@@ -29,8 +29,9 @@ Display.Active.prototype = {
 	Display.scale_text.right = display.add.text(Display.width, Display.height - 20, '0', { font: '20px Arial', fill: '#444' });
 	Display.scale_text.right.anchor.x = 1;
 
-	for (var i = 1; i < Display.intervals + 1; i++) {
+	for (var i = 1; i < Display.intervals; i++) {
 	    Display.scale_text["i" + i] = display.add.text(i * Display.width / Display.intervals, Display.height - 20, '0', { font: '20px Arial', fill: '#444' });
+	    Display.scale_text["i" + i].anchor.x = 0.5;
 	}
 
 	
@@ -53,6 +54,7 @@ Display.Active.prototype = {
 	plot.median = this.quartile(arr, 2);
 	plot.q3     = this.quartile(arr, 3);
 	plot.max    = this.quartile(arr, 4);
+	console.log(plot);
     },
     
     draw: function () {
@@ -84,7 +86,7 @@ Display.Active.prototype = {
 	Display.scale_text.left.text = plot.min;
 	Display.scale_text.right.text = plot.max;
 
-	for (var i = 1; i < Display.intervals + 1; i++) {
+	for (var i = 1; i < Display.intervals; i++) {
 	    Display.scale_text["i" + i].text = Math.round((+plot.min + i * plot.range() / Display.intervals) * 100) / 100;
 	}
     },
@@ -98,7 +100,7 @@ Display.Active.prototype = {
 	return  ((x - plot.min) / plot.range()) * Display.width;
     },
 
-    quartile: function (arr, q) { // q should be 0, 1, 2, 3, or 4
+    quartile_old: function (arr, q) { // q should be 0, 1, 2, 3, or 4
 	var index = q * 0.25 * (arr.length - 1);
 
 	var val_floor = +arr[Math.floor(index)]; // + unary operators are to cast strings to numbers
@@ -113,6 +115,23 @@ Display.Active.prototype = {
 	    return (val_floor + val_ceil) / 2;
 	case 0.75:
 	    return (val_floor + val_ceil * 3) / 4;
+	}
+    },
+
+    quartile: function (arr, q) {
+	var split_array = this.median(arr);
+
+	switch (q) {
+	case 0:
+	    return arr[0];
+	case 1:
+	    return this.median(split_array.left).median;
+	case 2:
+	    return split_array.median;
+	case 3:
+	    return this.median(split_array.right).median;
+	case 4:
+	    return arr[arr.length - 1];
 	}
     },
 
@@ -132,7 +151,7 @@ Display.Active.prototype = {
 	}
 	else {
 	    index = arr.length / 2;
-	    ret.median = (arr[index - 1] + arr[index]) / 2;
+	    ret.median = (+arr[index - 1] + +arr[index]) / 2;
 	    ret.left   = arr.slice(0, index);
 	    ret.right  = arr.slice(index);
 	}

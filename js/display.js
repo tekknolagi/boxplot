@@ -92,10 +92,10 @@ Display.Active.prototype = {
 	    stats.min_valid = arr[i + 1];
 	    stats.outliers.push(arr[i]);
 	    
-	    arr++;
+	    i++;
 	}
 
-	// calcualte upper outliers
+	// calculate upper outliers
 	i = arr.length - 1;
 	stats.max_valid = stats.max;
 	while (arr[i] > stats.q3 + 1.5 * stats.IQR) {

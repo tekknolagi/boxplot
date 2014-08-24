@@ -4,8 +4,8 @@
   + Download .png
   + Better input
 * Unmet requirements
-  + Outliers
   + Labels
 * Other
   + Switch from Phaser to Pixi.js
   + Neutral background
+  + Make sure entire boxplot is on screen

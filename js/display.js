@@ -1,6 +1,9 @@
 var Display = {
-    width:  600,
+    width:  620,
     height: 340,
+    draw_width: 600,
+    draw_offset: 10,
+    
     line_width: 2,
     box_height: 50,
     intervals: 4,
@@ -32,8 +35,8 @@ Display.Active.prototype = {
 	
 	Display.scale_text = {};
 	Display.scale_text.left = display.add.text(0, Display.height - 20, '0', { font: '20px Arial', fill: '#444' });
-	Display.scale_text.right = display.add.text(Display.width, Display.height - 20, '0', { font: '20px Arial', fill: '#444' });
-	Display.scale_text.right.anchor.x = 1;
+	Display.scale_text.right = display.add.text(Display.draw_width + Display.draw_offset, Display.height - 20, '0', { font: '20px Arial', fill: '#444' });
+	Display.scale_text.right.anchor.x = 0.7;
 
 	for (var i = 1; i < Display.intervals; i++) {
 	    Display.scale_text["i" + i] = display.add.text(i * Display.width / Display.intervals, Display.height - 20, '0', { font: '20px Arial', fill: '#444' });
@@ -141,8 +144,9 @@ Display.Active.prototype = {
 	for (var i = 0; i < stats_pixels.outliers.length; i++) {
 	    this.draw_outlier(stats_pixels.outliers[i], Display.height / 2);
 	}
-	
-	display.graphics.lineStyle(1, 0x444444, 1); // scale
+
+	// scale
+	display.graphics.lineStyle(1, 0x444444, 1);
 	this.draw_line(0, Display.height - 24, Display.width, Display.height - 24);
 
 	Display.scale_text.left.text = stats.min;
@@ -164,7 +168,7 @@ Display.Active.prototype = {
     },
     
     to_pixels: function (x) {
-	return ((x - stats.min) / stats.range) * Display.width;
+	return ((x - stats.min) / stats.range) * (Display.draw_width) + Display.draw_offset;
     },
 
     quartile_old: function (arr, q) { // q should be 0, 1, 2, 3, or 4

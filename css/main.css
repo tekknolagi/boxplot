@@ -8,7 +8,7 @@ body {
     width: 800px;
     height: 400px;
     margin: 30px auto;
-    padding: 30px;
+    padding: 30px 10px 30px 30px;
 
     border: 1px solid #e5e5e5;
     -webkit-border-radius: 5px;
@@ -21,9 +21,11 @@ body {
 
 #spreadsheet {
     background-color: #eee;
-    width: 105px;
+    width: 115px;
     float: right;
     display: inline-block;
+    overflow: auto;
+    height: 340px;
 }
 
 #display {
@@ -33,7 +35,8 @@ body {
 /* Based on http://jsfiddle.net/ondras/hYfN3/ */
 input {
     border: none;
-    width: 80px;
+    /*    width: 80px; */
+    width: 67px;
     font-size: 14px;
     padding: 2px;
     background-color: #eee;

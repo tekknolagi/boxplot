@@ -31,8 +31,6 @@ Display.Active = function (display) { };
 
 Display.Active.prototype = {
     create: function () {
-	display.stage.backgroundColor = "#fcc";
-	
 	Display.scale_text = {};
 	Display.scale_text.left = display.add.text(0, Display.height - 20, '0', { font: '20px Arial', fill: '#444' });
 	Display.scale_text.right = display.add.text(Display.draw_width + Display.draw_offset, Display.height - 20, '0', { font: '20px Arial', fill: '#444' });
@@ -235,7 +233,7 @@ Display.update = function () {
     Display.Active.prototype.update_boxplot();
 };
 
-var display = new Phaser.Game(Display.width, Display.height, Phaser.CANVAS, 'display');
+var display = new Phaser.Game(Display.width, Display.height, Phaser.CANVAS, 'display', null, true);
 
 display.state.add('active', Display.Active);
 display.state.start('active');

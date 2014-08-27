@@ -13,6 +13,7 @@
       ga('send', 'pageview');
 
       </script>
+    <script type="text/javascript" src="js/zepto.min.js"></script>
   </head>
   
   <body>
@@ -21,7 +22,14 @@
       <div id="spreadsheet">
 	<table></table>
       </div>
-    </div>    
+    </div>
+    <div id="quartiles" class="box">
+      min: <div id="q0" class="stat"></div>
+      q1: <div id="q1" class="stat"></div>
+      median: <div id="q2" class="stat"></div>
+      q3: <div id="q3" class="stat"></div>
+      max: <div id="q4" class="stat"></div>
+    </div>
     <div id="footer" class="box">
       <p>Made by <a href="http://chinstorff.com">Christopher Hinstorff</a>. View the code <a href="http://github.com/chinstorff/boxplot">here</a>.</p>
       <p>Send feature requests, bug reports, and other feedback to <a href="mailto:boxplot@chinstorff.com">boxplot@chinstorff.com</a>.</p>

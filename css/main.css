@@ -22,6 +22,10 @@ p {
     box-shadow: 0 1px 2px rgba(0,0,0,.05);
 }
 
+.stat {
+    display: inline-block;
+}
+
 #content {
     height: 400px;
     padding-right: 10px;

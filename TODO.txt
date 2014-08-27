@@ -1,11 +1,5 @@
-* Functionality
+* Multiple boxplots
+* Better input
   + Accept pasting
-  + Multiple boxplots
-  + Download .png
-  + Better input
-* Unmet requirements
-  + Labels
-* Other
-  + Switch from Phaser to Pixi.js
-  + Neutral background
-  + Make sure entire boxplot is on screen
+  + Spreadsheet arrow keys and enter
+* Labels
